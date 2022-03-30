@@ -1,10 +1,10 @@
-local builtin = require("telescope.builtin")
-local actions = require("telescope.actions")
-local actions_state = require("telescope.actions.state")
-local transform_mod = require('telescope.actions.mt').transform_mod
+local builtin = require "telescope.builtin"
+local actions = require "telescope.actions"
+local actions_state = require "telescope.actions.state"
+local transform_mod = require("telescope.actions.mt").transform_mod
 
-local _git = require("telescope._extensions.project.git")
-local _utils = require("telescope._extensions.project.utils")
+local _git = require "telescope._extensions.project.git"
+local _utils = require "telescope._extensions.project.utils"
 
 local M = {}
 
@@ -41,14 +41,14 @@ M.add_project = function()
   end
 
   io.close(file)
-  print('Project added: ' .. path)
+  print("Project added: " .. path)
 end
 
 -- Rename the selected project within the `telescope_projects_file`.
 M.rename_project = function(prompt_bufnr)
   local selected_path = M.get_selected_path(prompt_bufnr)
   local selected_title = M.get_selected_title(prompt_bufnr)
-  local new_title = vim.fn.input('Rename ' ..selected_title.. ' to: ', selected_title)
+  local new_title = vim.fn.input("Rename " .. selected_title .. " to: ", selected_title)
   local projects = _utils.get_project_objects()
 
   local file = io.open(_utils.telescope_projects_file, "w")
@@ -66,19 +66,18 @@ end
 M.change_workspace = function(prompt_bufnr)
   local selected_path = M.get_selected_path(prompt_bufnr)
   local projects = _utils.get_project_objects()
-  local new_workspace = vim.fn.input('Move project to workspace: ')
+  local new_workspace = vim.fn.input "Move project to workspace: "
 
   local file = io.open(_utils.telescope_projects_file, "w")
   for _, project in pairs(projects) do
     if project.path == selected_path then
-      project.workspace = 'w' .. new_workspace
+      project.workspace = "w" .. new_workspace
     end
     _utils.store_project(file, project)
   end
 
   io.close(file)
 end
-
 
 -- Delete (deactivate) the selected project from the `telescope_projects_file`
 M.delete_project = function(prompt_bufnr)
@@ -94,7 +93,7 @@ M.delete_project = function(prompt_bufnr)
   end
 
   io.close(file)
-  print('Project deleted: ' .. selected_path)
+  print("Project deleted: " .. selected_path)
 end
 
 -- Find files within the selected project using the
@@ -105,7 +104,7 @@ M.find_project_files = function(prompt_bufnr, hidden_files)
   local cd_successful = _utils.change_project_dir(project_path)
   if cd_successful then
     vim.schedule(function()
-      builtin.find_files({cwd = project_path, hidden = hidden_files})
+      builtin.find_files { cwd = project_path, hidden = hidden_files }
     end)
   end
 end
@@ -118,7 +117,7 @@ M.browse_project_files = function(prompt_bufnr)
   local cd_successful = _utils.change_project_dir(project_path)
   if cd_successful then
     vim.schedule(function()
-      builtin.file_browser({cwd = project_path})
+      builtin.file_browser { cwd = project_path }
     end)
   end
 end
@@ -131,7 +130,7 @@ M.search_in_project_files = function(prompt_bufnr)
   local cd_successful = _utils.change_project_dir(project_path)
   if cd_successful then
     vim.schedule(function()
-      builtin.live_grep({cwd = project_path})
+      builtin.live_grep { cwd = project_path }
     end)
   end
 end
@@ -144,7 +143,7 @@ M.recent_project_files = function(prompt_bufnr)
   local cd_successful = _utils.change_project_dir(project_path)
   if cd_successful then
     vim.schedule(function()
-      builtin.oldfiles({cwd_only = true})
+      builtin.oldfiles { cwd_only = true }
     end)
   end
 end
@@ -160,10 +159,12 @@ end
 M.open_session = function(prompt_bufnr)
   local project_path = M.get_selected_path(prompt_bufnr)
   actions._close(prompt_bufnr, true)
+  -- save this session first before changing directory, autosave_session checks for normal only
+  vim.api.nvim_command [[lua require('session_manager').autosave_session()]]
   local cd_successful = _utils.change_project_dir(project_path)
   if cd_successful then
     vim.schedule(function()
-      vim.api.nvim_command('SessionManager load_current_dir_session')
+      vim.api.nvim_command [[SessionManager load_current_dir_session]]
     end)
   end
 end
