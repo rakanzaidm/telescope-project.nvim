@@ -165,6 +165,8 @@ M.open_session = function(prompt_bufnr)
   if cd_successful then
     vim.schedule(function()
       vim.api.nvim_command [[SessionManager load_current_dir_session]]
+      -- get out of insert mode to normal mode because we often search the project
+      vim.api.nvim_command [[stopinsert]]
     end)
   end
 end
