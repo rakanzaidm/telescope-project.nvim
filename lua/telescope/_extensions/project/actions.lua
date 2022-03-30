@@ -20,7 +20,9 @@ end
 
 -- Create a new project and add it to the list in the `telescope_projects_file`
 M.add_project = function()
-  local path = _git.try_and_find_git_path()
+  -- local path = _git.try_and_find_git_path()
+  -- [[rakan]] use local directory instead
+  local path = vim.loop.cwd()
   local projects = _utils.get_project_objects()
   local path_not_in_projects = true
 
@@ -152,6 +154,18 @@ M.change_working_directory = function(prompt_bufnr)
   local project_path = M.get_selected_path(prompt_bufnr)
   actions.close(prompt_bufnr)
   _utils.change_project_dir(project_path)
+end
+
+-- [[rakan]] create new action, open session, to yeah open session HAHA
+M.open_session = function(prompt_bufnr)
+  local project_path = M.get_selected_path(prompt_bufnr)
+  actions._close(prompt_bufnr, true)
+  local cd_successful = _utils.change_project_dir(project_path)
+  if cd_successful then
+    vim.schedule(function()
+      vim.api.nvim_command('SessionManager load_current_dir_session')
+    end)
+  end
 end
 
 return transform_mod(M)

@@ -35,14 +35,16 @@ M.project_finder = function(opts, projects)
     separator = " ",
     items = {
       { width = widths.title },
-      { width = widths.workspace },
+      -- [[rakan]] remove workspace separator
+      -- { width = widths.workspace },
       { width = widths.display_path },
     }
   }
   local make_display = function(project)
     return displayer {
       { project.title },
-      { project.workspace },
+      -- [[rakan]] remove workspace
+      -- { project.workspace },
       { project.display_path }
     }
   end

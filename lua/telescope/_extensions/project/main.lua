@@ -70,7 +70,9 @@ M.project = function(opts)
       map('i', '<c-w>', _actions.change_workspace)
 
       local on_project_selected = function()
-        _actions.find_project_files(prompt_bufnr, hidden_files)
+        -- _actions.find_project_files(prompt_bufnr, hidden_files)
+        -- [[rakan]] open session on enter
+        _actions.open_session(prompt_bufnr)
       end
       actions.select_default:replace(on_project_selected)
       return true
